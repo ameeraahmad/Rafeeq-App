@@ -1,0 +1,6 @@
+{
+  "name": "Rafeeq - رفيق",
+  "description": "تطبيق رفيق (Rafeeq) - تطبيق ريادي قائم على التأثير الاجتماعي لربط ذوي الهمم بمتطوعين مؤهلين لتقديم الدعم والمرافقة الشخصية وتعزيز الاستقلالية والدمج المجتمعي.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
