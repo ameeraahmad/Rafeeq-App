@@ -145,56 +145,58 @@ fun RafeeqApp(
 // ONBOARDING & LOGIN SCREEN
 @Composable
 fun OnboardingScreen(viewModel: RafeeqViewModel, trans: Translation) {
-    val users by viewModel.allUsers.collectAsState()
     var showRegisterDialog by remember { mutableStateOf(false) }
+    var showLoginDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
         // App Header & Logo
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = trans.t("رفيق - Rafeeq", "Rafeeq - رفيق"),
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 28.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            // Lang Toggle in Onboarding
+            Column {
+                Text(
+                    text = trans.t("رفيق - Rafeeq", "Rafeeq - رفيق"),
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 28.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = trans.t("خيرُ صُحبة", "Best Companionship"),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
+            // Lang Toggle
             Button(
                 onClick = { viewModel.toggleLanguage() },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                )
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text(trans.t("English", "العربية"), fontSize = 12.sp, fontWeight = FontWeight.Bold)
             }
         }
 
-        Text(
-            text = trans.t("خيرُ صُحبة", "Best Companionship"),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        // Custom Vector Hero Banner
+        // Hero Banner
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
-            shape = RoundedCornerShape(20.dp),
+                .height(260.dp),
+            shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -204,152 +206,74 @@ fun OnboardingScreen(viewModel: RafeeqViewModel, trans: Translation) {
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-                // Overlay text
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f))
+                                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
                             )
                         )
-                        .padding(16.dp),
+                        .padding(20.dp),
                     contentAlignment = Alignment.BottomStart
                 ) {
-                    Column {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
                             text = trans.t("تواصل ملموس وأمان إنساني", "Human Companionship & Security"),
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
+                            fontSize = 20.sp
                         )
                         Text(
-                            text = trans.t("نربط ذوي الهمم بمتطوعين مؤهلين لمشاوير يومية سعيدة", "Connecting people of determination with trusted volunteers"),
-                            color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 12.sp
+                            text = trans.t(
+                                "نربط ذوي الهمم بمتطوعين مؤهلين لمشاوير يومية سعيدة",
+                                "Connecting people of determination with trusted volunteers"
+                            ),
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 13.sp
                         )
                     }
                 }
             }
         }
 
-        // Project Introduction Paragraphs (Bilingual)
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            tonalElevation = 2.dp
-        ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = trans.t("عن مبادرة رفيق", "About Rafeeq Initiative"),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = trans.t(
-                        "رفيق هو منصة إنسانية تضمن تمكين ذوي الهمم وبناء الرفقة الطيبة والدمج المجتمعي. يخضع جميع المتطوعين لتدقيق أمني صارم (الرقم القومي وفيش جنائي) لضمان أقصى حماية وسلامة.",
-                        "Rafeeq is a social-impact platform connecting people of determination (Qaderoon) with vetted companion volunteers. All volunteers undergo rigorous identity vetting (National ID and Criminal record) to guarantee safety."
-                    ),
-                    fontSize = 13.sp,
-                    lineHeight = 20.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-        // Demo Personas Section
-        Text(
-            text = trans.t("اختر شخصية لتجربة التطبيق فوراً:", "Select a persona to test instantly:"),
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.align(Alignment.Start)
-        )
-
-        // Seeker Personas
-        Text(
-            text = trans.t("1. ذوي الهمم (طالبي الدعم):", "1. Support Seekers (People of Determination):"),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.align(Alignment.Start)
-        )
-
-        users.filter { it.role == "SEEKER" }.forEach { user ->
-            PersonaRow(user, trans) { viewModel.selectUser(user) }
-        }
-
-        // Volunteer Personas
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = trans.t("2. متطوعون (مقدمي الدعم):", "2. Volunteers (Support Providers):"),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.align(Alignment.Start)
-        )
-
-        users.filter { it.role == "VOLUNTEER" }.forEach { user ->
-            PersonaRow(user, trans) { viewModel.selectUser(user) }
-        }
-
-        // Admin & Controls
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = trans.t("3. الإدارة والتحكم:", "3. Administration & Custom Actions:"),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.align(Alignment.Start)
-        )
-
-        // Admin Selector Card
-        Card(
-            onClick = { viewModel.enterAdminMode() },
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f)),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Icon(Icons.Default.Security, contentDescription = "Admin", tint = MaterialTheme.colorScheme.error)
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = trans.t("لوحة تحكم المشرف (مراجعة واعتماد المتطوعين)", "System Admin Dashboard (Vetting Volunteers)"),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                    Text(
-                        text = trans.t("مراجعة المستندات الأمنية (الفيش والتشبيه والبطاقة) يدوياً وتفعيل الحسابات", "Manually inspect ID and criminal record documents and activate accounts"),
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Icon(Icons.Default.KeyboardArrowLeft, contentDescription = null, tint = MaterialTheme.colorScheme.error)
-            }
-        }
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Register Button
         Button(
             onClick = { showRegisterDialog = true },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            shape = RoundedCornerShape(12.dp)
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp)
         ) {
             Icon(Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(trans.t("تسجيل حساب مستخدم جديد", "Register New Account"), fontWeight = FontWeight.Bold)
+            Text(
+                trans.t("تسجيل حساب جديد", "Create New Account"),
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
         }
+
+        // Login Button
+        OutlinedButton(
+            onClick = { showLoginDialog = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Icon(Icons.Default.Login, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                trans.t("تسجيل الدخول", "Sign In"),
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 
     if (showRegisterDialog) {
@@ -360,6 +284,14 @@ fun OnboardingScreen(viewModel: RafeeqViewModel, trans: Translation) {
                 viewModel.registerNewUser(name, role, phone, gender, disType, needs, availability, natId, clearance)
                 showRegisterDialog = false
             }
+        )
+    }
+
+    if (showLoginDialog) {
+        LoginDialog(
+            trans = trans,
+            viewModel = viewModel,
+            onDismiss = { showLoginDialog = false }
         )
     }
 }
@@ -431,7 +363,110 @@ fun PersonaRow(user: User, trans: Translation, onClick: () -> Unit) {
     }
 }
 
-// REGISTRATION DIALOG
+// LOGIN DIALOG
+@Composable
+fun LoginDialog(
+    trans: Translation,
+    viewModel: RafeeqViewModel,
+    onDismiss: () -> Unit
+) {
+    val allUsers by viewModel.allUsers.collectAsState()
+    var phone by remember { mutableStateOf("") }
+    var errorMsg by remember { mutableStateOf("") }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(20.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Header
+                Icon(
+                    Icons.Default.Login,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(40.dp)
+                )
+                Text(
+                    text = trans.t("تسجيل الدخول", "Sign In"),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = trans.t(
+                        "أدخل رقم هاتفك المسجل للدخول إلى حسابك",
+                        "Enter your registered phone number to sign in"
+                    ),
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+
+                // Phone Input
+                OutlinedTextField(
+                    value = phone,
+                    onValueChange = {
+                        phone = it
+                        errorMsg = ""
+                    },
+                    label = { Text(trans.t("رقم الهاتف", "Phone Number")) },
+                    leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = errorMsg.isNotEmpty()
+                )
+
+                if (errorMsg.isNotEmpty()) {
+                    Text(
+                        text = errorMsg,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 12.sp
+                    )
+                }
+
+                // Buttons Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(trans.t("إلغاء", "Cancel"))
+                    }
+                    Button(
+                        onClick = {
+                            val user = allUsers.find { it.phone == phone.trim() }
+                            if (user != null) {
+                                viewModel.selectUser(user)
+                                onDismiss()
+                            } else {
+                                errorMsg = trans.t(
+                                    "رقم الهاتف غير مسجل. تحقق من الرقم أو سجل حساباً جديداً.",
+                                    "Phone number not found. Check the number or register a new account."
+                                )
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        enabled = phone.isNotBlank()
+                    ) {
+                        Text(trans.t("دخول", "Sign In"), fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationDialog(
@@ -858,6 +893,7 @@ fun StatusBadge(status: String, trans: Translation) {
 
 
 // CREATE TRIP SCREEN (REQUEST FORM)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTripScreen(viewModel: RafeeqViewModel, trans: Translation) {
     var title by remember { mutableStateOf("") }
@@ -865,6 +901,8 @@ fun CreateTripScreen(viewModel: RafeeqViewModel, trans: Translation) {
     var toLocation by remember { mutableStateOf("") }
     var dateTime by remember { mutableStateOf("") }
     var helpNeeded by remember { mutableStateOf("") }
+    
+    var showMapFor by remember { mutableStateOf<String?>(null) } // "FROM" or "TO"
 
     Column(
         modifier = Modifier
@@ -891,14 +929,24 @@ fun CreateTripScreen(viewModel: RafeeqViewModel, trans: Translation) {
             value = fromLocation,
             onValueChange = { fromLocation = it },
             label = { Text(trans.t("نقطة الانطلاق (الموقع الحالي)", "Starting Point (Current Location)")) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                IconButton(onClick = { showMapFor = "FROM" }) {
+                    Icon(Icons.Default.Map, contentDescription = "اختر من الخريطة")
+                }
+            }
         )
 
         OutlinedTextField(
             value = toLocation,
             onValueChange = { toLocation = it },
             label = { Text(trans.t("الوجهة المقصودة", "Destination Point")) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                IconButton(onClick = { showMapFor = "TO" }) {
+                    Icon(Icons.Default.Map, contentDescription = "اختر من الخريطة")
+                }
+            }
         )
 
         OutlinedTextField(
@@ -933,6 +981,36 @@ fun CreateTripScreen(viewModel: RafeeqViewModel, trans: Translation) {
             Icon(Icons.Default.Send, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text(trans.t("نشر طلب الرفقة", "Post Companion Errand"), fontWeight = FontWeight.Bold)
+        }
+    }
+
+    if (showMapFor != null) {
+        Dialog(
+            onDismissRequest = { showMapFor = null },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Surface(modifier = Modifier.fillMaxSize()) {
+                Column {
+                    TopAppBar(
+                        title = { Text(if (showMapFor == "FROM") trans.t("حدد نقطة الانطلاق", "Select Starting Point") else trans.t("حدد الوجهة المقصودة", "Select Destination")) },
+                        navigationIcon = {
+                            IconButton(onClick = { showMapFor = null }) {
+                                Icon(Icons.Default.Close, contentDescription = "إغلاق")
+                            }
+                        }
+                    )
+                    Box(modifier = Modifier.weight(1f)) {
+                        OsmMapScreen(
+                            onLocationSelected = { lat, lon ->
+                                val locationStr = String.format(java.util.Locale.US, "%.4f, %.4f", lat, lon)
+                                if (showMapFor == "FROM") fromLocation = locationStr
+                                else toLocation = locationStr
+                                showMapFor = null
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }

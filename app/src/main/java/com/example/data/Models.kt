@@ -2,9 +2,10 @@ package com.example.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.io.Serializable
+import kotlinx.serialization.Serializable
 
 @Entity(tableName = "users")
+@Serializable
 data class User(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
@@ -19,9 +20,10 @@ data class User(
     val rating: Float = 5.0f,
     val totalTrips: Int = 0,
     val volunteerAvailability: String? = null // e.g. "الاثنين والأربعاء", "الأحد والأربعاء", "كل الأيام"
-) : Serializable
+)
 
 @Entity(tableName = "trips")
+@Serializable
 data class Trip(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val seekerId: Int,
@@ -40,13 +42,14 @@ data class Trip(
     val ratingToVolunteer: Int? = null,
     val ratingToSeeker: Int? = null,
     val reviewText: String? = null
-) : Serializable
+)
 
 @Entity(tableName = "messages")
+@Serializable
 data class Message(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val tripId: Int,
     val senderId: Int,
     val text: String,
     val timestamp: Long = System.currentTimeMillis()
-) : Serializable
+)

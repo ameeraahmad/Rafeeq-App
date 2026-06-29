@@ -4,8 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.Message
-import com.example.data.RafeeqDatabase
-import com.example.data.RafeeqRepository
+import com.example.data.SupabaseRepository
 import com.example.data.Trip
 import com.example.data.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +29,7 @@ enum class RafeeqScreen {
 }
 
 class RafeeqViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: RafeeqRepository
+    private val repository: SupabaseRepository = SupabaseRepository()
 
     // Global lists
     val allUsers: StateFlow<List<User>>
@@ -54,22 +53,19 @@ class RafeeqViewModel(application: Application) : AndroidViewModel(application) 
     val chatMessages: StateFlow<List<Message>>
 
     init {
-        val database = RafeeqDatabase.getDatabase(application)
-        repository = RafeeqRepository(database)
-
-        allUsers = repository.allUsers.stateIn(
+        allUsers = repository.getAllUsersFlow().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
-        allTrips = repository.allTrips.stateIn(
+        allTrips = repository.getAllTripsFlow().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
-        pendingTrips = repository.pendingTrips.stateIn(
+        pendingTrips = repository.getPendingTripsFlow().stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
@@ -79,7 +75,7 @@ class RafeeqViewModel(application: Application) : AndroidViewModel(application) 
         chatMessages = _selectedTrip
             .flatMapLatest { trip ->
                 if (trip != null) {
-                    repository.getMessagesForTrip(trip.id)
+                    repository.getMessagesForTripFlow(trip.id)
                 } else {
                     flowOf(emptyList())
                 }
@@ -92,11 +88,7 @@ class RafeeqViewModel(application: Application) : AndroidViewModel(application) 
 
         // Populate initial data if empty (fallback)
         viewModelScope.launch {
-            repository.allUsers.map { it.isEmpty() }.collect { isEmpty ->
-                if (isEmpty) {
-                    repository.reseedDb()
-                }
-            }
+            repository.seedIfEmpty()
         }
     }
 
@@ -168,7 +160,7 @@ class RafeeqViewModel(application: Application) : AndroidViewModel(application) 
         if (!volunteer.isVetted) return // Only vetted volunteers can accept
 
         viewModelScope.launch {
-            repository.acceptTrip(trip.id, volunteer.id, volunteer.name)
+            repository.updateTripStatusAndVolunteer(trip.id, "ACCEPTED", volunteer.id, volunteer.name)
             // Update local selected trip if needed
             val updatedTrip = repository.getTripById(trip.id)
             if (updatedTrip != null) {
@@ -182,7 +174,7 @@ class RafeeqViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             val trip = repository.getTripById(tripId)
             if (trip != null && trip.otp == enteredOtp) {
-                repository.updateTripStatus(tripId, "ACTIVE", trip.volunteerId, trip.volunteerName)
+                repository.updateTripStatusAndVolunteer(tripId, "ACTIVE", trip.volunteerId, trip.volunteerName)
                 val updatedTrip = repository.getTripById(tripId)
                 _selectedTrip.value = updatedTrip
                 onResult(true)
@@ -198,7 +190,7 @@ class RafeeqViewModel(application: Application) : AndroidViewModel(application) 
             val trip = repository.getTripById(tripId)
             if (trip != null) {
                 // Change status to completed or wait for review
-                repository.updateTripStatus(tripId, "COMPLETED", trip.volunteerId, trip.volunteerName)
+                repository.updateTripStatusAndVolunteer(tripId, "COMPLETED", trip.volunteerId, trip.volunteerName)
                 val updatedTrip = repository.getTripById(tripId)
                 _selectedTrip.value = updatedTrip
             }
@@ -278,7 +270,7 @@ class RafeeqViewModel(application: Application) : AndroidViewModel(application) 
     // Reseed DB for development / play
     fun resetDatabase() {
         viewModelScope.launch {
-            repository.reseedDb()
+            repository.seedIfEmpty()
             _currentUser.value = null
             _selectedTrip.value = null
             _currentScreen.value = RafeeqScreen.ONBOARDING
