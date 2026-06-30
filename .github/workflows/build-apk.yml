@@ -13,6 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          df -h
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -23,11 +30,18 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK 36
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK to Artifacts
         uses: actions/upload-artifact@v4
