@@ -29,8 +29,18 @@ jobs:
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload APK to Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: rafeeq-app-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload APK to Appetize.io
+        run: |
+          RESPONSE=$(curl -s -F "file=@app/build/outputs/apk/debug/app-debug.apk" -F "token=tok_ix7jnc7maeqoshspri7ogtow5m" https://api.appetize.io/v1/apps)
+          PUBLIC_KEY=$(echo $RESPONSE | grep -o '"publicKey":"[^"]*' | grep -o '[^"]*$')
+          echo "=========================================================="
+          echo "🎉 APP UPLOADED TO APPETIZE.IO SUCCESSFULLY!"
+          echo "🔗 YOUR DIRECT LINK TO VIEW THE APP IN BROWSER IS:"
+          echo "https://appetize.io/app/$PUBLIC_KEY"
+          echo "=========================================================="
