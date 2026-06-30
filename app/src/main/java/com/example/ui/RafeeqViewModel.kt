@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.Message
-import com.example.data.SupabaseRepository
+import com.example.data.FirebaseRepository
 import com.example.data.Trip
 import com.example.data.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +29,7 @@ enum class RafeeqScreen {
 }
 
 class RafeeqViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: SupabaseRepository = SupabaseRepository()
+    private val repository: FirebaseRepository = FirebaseRepository()
 
     // Global lists
     val allUsers: StateFlow<List<User>>

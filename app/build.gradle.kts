@@ -79,11 +79,8 @@ googleServices {
 dependencies {
   implementation(platform(libs.androidx.compose.bom))
   implementation(platform(libs.firebase.bom))
-  // Supabase
-  implementation(platform(libs.supabase.bom))
-  implementation(libs.supabase.postgrest)
-  implementation(libs.supabase.realtime)
-  implementation(libs.supabase.auth)
+  implementation(libs.firebase.firestore)
+  implementation(libs.firebase.auth)
   implementation(libs.ktor.client.android)
   // implementation(libs.accompanist.permissions)
   implementation(libs.androidx.activity.compose)
