@@ -47,15 +47,19 @@ jobs:
 JSON
           fi
 
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
       - name: Deploy to Firebase Hosting
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: |
-          if [ -z "$FIREBASE_TOKEN" ] || [ -z "$PROJECT_ID" ]; then
-            echo "Missing FIREBASE_TOKEN or FIREBASE_PROJECT_ID secret" && exit 1
+          if [ -z "$PROJECT_ID" ]; then
+            echo "Missing FIREBASE_PROJECT_ID secret" && exit 1
           fi
-          firebase deploy --only hosting --project "$PROJECT_ID" --token "$FIREBASE_TOKEN"
+          firebase deploy --only hosting --project "$PROJECT_ID"
